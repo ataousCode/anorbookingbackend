@@ -15,16 +15,12 @@ public class ReferenceGenerator {
     }
 
     public static String generateBookingReference() {
-        // Format: ANB-{date}-{random}
-        // Example: ANB-230615-XY4Z
         String datePart = LocalDateTime.now().format(DATE_FORMAT);
         String randomPart = generateRandomString(4);
         return String.format("ANB-%s-%s", datePart, randomPart);
     }
 
     public static String generateTransactionReference() {
-        // Format: TRX-{date}-{random}
-        // Example: TRX-230615-AB12CD34
         String datePart = LocalDateTime.now().format(DATE_FORMAT);
         String randomPart = generateRandomString(8);
         return String.format("TRX-%s-%s", datePart, randomPart);

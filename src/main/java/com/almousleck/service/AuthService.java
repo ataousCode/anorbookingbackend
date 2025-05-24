@@ -77,6 +77,7 @@ public class AuthService {
                 .enabled(false)
                 .build();
 
+        // check if role is here or give error
         Role userRole = roleRepository.findByName(Role.RoleName.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         user.setRoles(Collections.singleton(userRole));

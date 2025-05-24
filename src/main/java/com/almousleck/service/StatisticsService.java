@@ -35,7 +35,8 @@ public class StatisticsService {
 
         // Check if user is the organizer or an admin
         if (!event.getOrganizer().getId().equals(currentUser.getId()) &&
-                !currentUser.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                !currentUser.getAuthorities().stream().anyMatch(
+                        a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             throw new AccessDeniedException("You don't have permission to view statistics for this event");
         }
 

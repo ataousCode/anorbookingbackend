@@ -4,10 +4,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.security.SecureRandom;
 
-/**
- * Utility class for generating secure passwords and encoding them.
- * This is primarily used for development and testing purposes.
- */
+
+// this class is implemented for testing
 public class PasswordGenerator {
 
     private static final String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
@@ -22,14 +20,6 @@ public class PasswordGenerator {
         // Private constructor to prevent instantiation
     }
 
-    /**
-     * Generates a secure random password with the specified length.
-     * The password will contain at least one lowercase letter, one uppercase letter,
-     * one number, and one special character.
-     *
-     * @param length the length of the password to generate
-     * @return the generated password
-     */
     public static String generateSecurePassword(int length) {
         if (length < 8) {
             throw new IllegalArgumentException("Password length must be at least 8 characters");
@@ -60,30 +50,10 @@ public class PasswordGenerator {
         return new String(passwordArray);
     }
 
-    /**
-     * Encodes a password using BCrypt.
-     *
-     * @param rawPassword the raw password to encode
-     * @return the encoded password
-     */
+
     public static String encodePassword(String rawPassword) {
         return ENCODER.encode(rawPassword);
     }
 
-    /**
-     * Main method for testing and generating encoded passwords.
-     * This can be used to generate passwords for database initialization.
-     */
-    public static void main(String[] args) {
-        String password = "admin123";
-        String encodedPassword = encodePassword(password);
-        System.out.println("Raw password: " + password);
-        System.out.println("Encoded password: " + encodedPassword);
-
-        String generatedPassword = generateSecurePassword(12);
-        String encodedGeneratedPassword = encodePassword(generatedPassword);
-        System.out.println("\nGenerated password: " + generatedPassword);
-        System.out.println("Encoded generated password: " + encodedGeneratedPassword);
-    }
 }
 

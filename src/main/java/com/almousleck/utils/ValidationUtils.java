@@ -2,6 +2,7 @@ package com.almousleck.utils;
 
 import java.util.regex.Pattern;
 
+// this class handle validation email input password and digit numbers
 public class ValidationUtils {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
