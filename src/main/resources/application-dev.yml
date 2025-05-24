@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/anor_booking
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your-email@gmail.com
+    password: your-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+app:
+  jwt:
+    secret: "AtalibJavaVeryLongAndSecureSecretKeyThatIsAtLeast64BytesLongToSatisfyTheHS512AlgorithmRequirementsAtalibJavarVeryLongAndSecureSecretKeyThatIsAtLeast64BytesLong"
+    expiration: 86400000
+    refresh-expiration: 604800000
+  cors:
+    allowed-origins: "*"
+  storage:
+    upload-dir: uploads
+
+server:
+  port: 8081

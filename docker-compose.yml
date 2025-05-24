@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: anor-booking-postgres
+    environment:
+      POSTGRES_DB: anor_booking
+      POSTGRES_USER: anor_user
+      POSTGRES_PASSWORD: anor_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - anor-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U anor_user -d anor_booking"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: anor-booking-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@anor.com
+      PGADMIN_DEFAULT_PASSWORD: admin_password
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - anor-network
+
+  maildev:
+    image: maildev/maildev
+    container_name: anor-booking-maildev
+    ports:
+      - "1080:1080"  # Web interface
+      - "1025:1025"  # SMTP server
+    networks:
+      - anor-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: anor-booking-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/anor_booking
+      SPRING_DATASOURCE_USERNAME: anor_user
+      SPRING_DATASOURCE_PASSWORD: anor_password
+      SPRING_MAIL_HOST: maildev
+      SPRING_MAIL_PORT: 1025
+    networks:
+      - anor-network
+
+networks:
+  anor-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

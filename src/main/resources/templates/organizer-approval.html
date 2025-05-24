@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Application Approved</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Organizer Application Approved</h2>
+    </div>
+    <p>Hello <span th:text="${name}">User</span>,</p>
+
+    <div class="message">
+        <p>Congratulations! Your application to become an organizer on Anor Booking has been approved.</p>
+    </div>
+
+    <p>You now have access to the organizer dashboard where you can:</p>
+    <ul>
+        <li>Create and manage events</li>
+        <li>Set ticket types and pricing</li>
+        <li>Monitor ticket sales and bookings</li>
+        <li>Generate reports on your events</li>
+    </ul>
+
+    <p>To get started, simply log in to your Anor Booking account and access the organizer dashboard from the menu.</p>
+
+    <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+
+    <p>Best regards,<br>The Anor Booking Team</p>
+
+    <div class="footer">
+        <p>This is an automated message, please do not reply.</p>
+        <p>&copy; 2023 Anor Booking. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>

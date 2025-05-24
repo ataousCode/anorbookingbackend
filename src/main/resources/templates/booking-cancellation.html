@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Cancellation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .booking-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .booking-reference {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Booking Cancellation</h2>
+    </div>
+    <p>Hello <span th:text="${name}">User</span>,</p>
+    <p>We're confirming that your booking has been cancelled as requested.</p>
+
+    <div class="booking-details">
+        <p>Booking Reference: <span class="booking-reference" th:text="${bookingReference}">ABC123</span></p>
+        <p>Event: <span th:text="${eventTitle}">Concert</span></p>
+        <p>Date & Time: <span th:text="${eventDate}">2023-12-31 20:00</span></p>
+    </div>
+
+    <p>If you cancelled this booking by mistake or would like to make a new booking, please visit the Anor Booking app.</p>
+
+    <p>We hope to see you at another event soon!</p>
+
+    <p>Best regards,<br>The Anor Booking Team</p>
+
+    <div class="footer">
+        <p>This is an automated message, please do not reply.</p>
+        <p>&copy; 2023 Anor Booking. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>
