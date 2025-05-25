@@ -78,7 +78,7 @@ public class AuthService {
                 .build();
 
         // check if role is here or give error
-        Role userRole = roleRepository.findByName(Role.RoleName.ROLE_ADMIN)
+        Role userRole = roleRepository.findByName(Role.RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         user.setRoles(Collections.singleton(userRole));
 
@@ -204,7 +204,8 @@ public class AuthService {
     }
 
     private void saveOtp(String email, String otp, OtpVerification.OtpType type) {
-        LocalDateTime expiryDate = LocalDateTime.now().plusSeconds(appProperties.getOtp().getExpiration());
+        LocalDateTime expiryDate = LocalDateTime.now()
+                .plusSeconds(appProperties.getOtp().getExpiration());
 
         OtpVerification otpVerification = OtpVerification.builder()
                 .email(email)
