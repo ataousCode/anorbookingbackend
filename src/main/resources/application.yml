@@ -38,8 +38,8 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:veryLongAndSecureSecretKeyForJwtTokenGenerationInAnorBookingApp}
-    expiration: 86400000  # 24 hours in milliseconds
-    refresh-expiration: 604800000  # 7 days in milliseconds
+    expiration: 86400000
+    refresh-expiration: 604800000
   cors:
     allowed-origins: "*"
     allowed-methods: GET,POST,PUT,DELETE,OPTIONS
@@ -48,7 +48,7 @@ app:
     from: noreply@anorbooking.com
     base-url: http://localhost:8081
   otp:
-    expiration: 300  # 5 minutes in seconds
+    expiration: 900
   file:
     upload-dir: ./uploads
 
