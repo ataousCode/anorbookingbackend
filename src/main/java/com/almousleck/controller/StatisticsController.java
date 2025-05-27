@@ -29,7 +29,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/organizer")
-    @PreAuthorize("hasRole('ORGANIZER')")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
     public ResponseEntity<OrganizerStatisticsResponse> getOrganizerStatistics(
             @CurrentUser UserPrincipal currentUser) {
         return ResponseEntity.ok(statisticsService.getOrganizerStatistics(currentUser));
