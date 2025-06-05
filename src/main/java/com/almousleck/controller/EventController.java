@@ -2,6 +2,7 @@ package com.almousleck.controller;
 
 import com.almousleck.dto.auth.ApiResponse;
 import com.almousleck.dto.event.*;
+import com.almousleck.dto.event.EventSummaryResponse;
 import com.almousleck.security.CurrentUser;
 import com.almousleck.security.UserPrincipal;
 import com.almousleck.service.EventService;
@@ -26,6 +27,13 @@ public class EventController {
     @GetMapping
     public ResponseEntity<Page<EventSummaryResponse>> getAllEvents(Pageable pageable) {
         return ResponseEntity.ok(eventService.getAllEvents(pageable));
+    }
+
+    @PostMapping("/clear-cache")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse> clearEventCache() {
+        eventService.clearEventCache();
+        return ResponseEntity.ok(new ApiResponse(true, "Event caches cleared successfully"));
     }
 
     @GetMapping("/category/{categoryId}")
@@ -106,6 +114,22 @@ public class EventController {
     public ResponseEntity<Page<EventSummaryResponse>> getOrganizerEvents(
             @CurrentUser UserPrincipal currentUser, Pageable pageable) {
         return ResponseEntity.ok(eventService.getOrganizerEvents(currentUser, pageable));
+    }
+
+    @PutMapping("/{eventId}/publish")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
+    public ResponseEntity<EventDetailResponse> publishEvent(
+            @CurrentUser UserPrincipal currentUser,
+            @PathVariable Long eventId) {
+        return ResponseEntity.ok(eventService.publishEvent(currentUser, eventId));
+    }
+
+    @PutMapping("/{eventId}/unpublish")
+    @PreAuthorize("hasRole('ORGANIZER') or hasRole('ADMIN')")
+    public ResponseEntity<EventDetailResponse> unpublishEvent(
+            @CurrentUser UserPrincipal currentUser,
+            @PathVariable Long eventId) {
+        return ResponseEntity.ok(eventService.unpublishEvent(currentUser, eventId));
     }
 }
 

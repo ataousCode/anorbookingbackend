@@ -14,6 +14,7 @@ import com.almousleck.repository.TicketRepository;
 import com.almousleck.repository.UserRepository;
 import com.almousleck.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventService {
 
     private final EventRepository eventRepository;
@@ -40,6 +42,11 @@ public class EventService {
     public Page<EventSummaryResponse> getAllEvents(Pageable pageable) {
         Page<Event> events = eventRepository.findByPublishedTrue(pageable);
         return events.map(this::convertToEventSummary);
+    }
+
+    @CacheEvict(value = {"events", "upcomingEvents", "eventsByCategory"}, allEntries = true)
+    public void clearEventCache() {
+        log.info("Event caches cleared successfully");
     }
 
     @Cacheable(value = "eventsByCategory", key = "#categoryId")
@@ -82,6 +89,10 @@ public class EventService {
         EventCategory category = categoryRepository.findById(createEventRequest.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("EventCategory", "id", createEventRequest.getCategoryId()));
 
+        if (!category.isActive()) {
+            throw new BadRequestException("Cannot create event with inactive category");
+        }
+
         Event event = Event.builder()
                 .title(createEventRequest.getTitle())
                 .description(createEventRequest.getDescription())
@@ -98,17 +109,31 @@ public class EventService {
         Event savedEvent = eventRepository.save(event);
 
         // Create tickets for the event
-        createEventRequest.getTickets().forEach(ticketRequest -> {
-            Ticket ticket = Ticket.builder()
-                    .type(ticketRequest.getType())
-                    .price(ticketRequest.getPrice())
-                    .totalQuantity(ticketRequest.getQuantity())
-                    .availableQuantity(ticketRequest.getQuantity())
+        if (createEventRequest.getTickets() != null && !createEventRequest.getTickets().isEmpty()) {
+            createEventRequest.getTickets().forEach(ticketRequest -> {
+                Ticket ticket = Ticket.builder()
+                        .type(ticketRequest.getType())
+                        .price(ticketRequest.getPrice())
+                        .totalQuantity(ticketRequest.getQuantity())
+                        .availableQuantity(ticketRequest.getQuantity())
+                        .event(savedEvent)
+                        .build();
+
+                ticketRepository.save(ticket);
+            });
+        } else {
+            // Create a default ticket if none provided
+            Ticket defaultTicket = Ticket.builder()
+                    .type("General Admission")
+                    .price(createEventRequest.getBasePrice())
+                    .totalQuantity(100) // Default quantity
+                    .availableQuantity(100)
                     .event(savedEvent)
                     .build();
 
-            ticketRepository.save(ticket);
-        });
+            ticketRepository.save(defaultTicket);
+        }
+
 
         // Log audit event
         auditLogger.logEvent("CREATE", "Event", savedEvent.getId(), currentUser,
@@ -288,6 +313,48 @@ public class EventService {
         return events.map(this::convertToEventSummary);
     }
 
+    @Transactional
+    @CacheEvict(value = {"events", "upcomingEvents", "eventsByCategory"}, allEntries = true)
+    public EventDetailResponse publishEvent(UserPrincipal currentUser, Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", eventId));
+
+        if (!event.getOrganizer().getId().equals(currentUser.getId()) &&
+                !currentUser.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new AccessDeniedException("You don't have permission to publish this event");
+        }
+
+        event.setPublished(true);
+        Event updatedEvent = eventRepository.save(event);
+
+        // Log audit event
+        auditLogger.logEvent("PUBLISH", "Event", updatedEvent.getId(), currentUser,
+                "Published event: " + updatedEvent.getTitle());
+
+        return convertToEventDetail(updatedEvent);
+    }
+
+    @Transactional
+    @CacheEvict(value = {"events", "upcomingEvents", "eventsByCategory"}, allEntries = true)
+    public EventDetailResponse unpublishEvent(UserPrincipal currentUser, Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event", "id", eventId));
+
+        if (!event.getOrganizer().getId().equals(currentUser.getId()) &&
+                !currentUser.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new AccessDeniedException("You don't have permission to unpublish this event");
+        }
+
+        event.setPublished(false);
+        Event updatedEvent = eventRepository.save(event);
+
+        // Log audit event
+        auditLogger.logEvent("UNPUBLISH", "Event", updatedEvent.getId(), currentUser,
+                "Unpublished event: " + updatedEvent.getTitle());
+
+        return convertToEventDetail(updatedEvent);
+    }
+
     private EventSummaryResponse convertToEventSummary(Event event) {
         return EventSummaryResponse.builder()
                 .id(event.getId())
@@ -301,6 +368,7 @@ public class EventService {
                 .categoryName(event.getCategory().getName())
                 .organizerId(event.getOrganizer().getId())
                 .organizerName(event.getOrganizer().getName())
+                .status(event.isPublished() ? "PUBLISHED" : "DRAFT")
                 .build();
     }
 

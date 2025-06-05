@@ -3,6 +3,8 @@ package com.almousleck.controller;
 import com.almousleck.dto.admin.AdminDashboardResponse;
 import com.almousleck.dto.admin.UserResponse;
 import com.almousleck.dto.admin.UserStatusRequest;
+import com.almousleck.dto.organizer.OrganizerApplicationResponse;
+import com.almousleck.dto.organizer.OrganizerApplicationStatusRequest;
 import com.almousleck.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,22 @@ public class AdminController {
             @PathVariable Long userId,
             @Valid @RequestBody UserStatusRequest request) {
         return ResponseEntity.ok(adminService.updateUserStatus(userId, request));
+    }
+
+    @GetMapping("/organizer-applications")
+    public ResponseEntity<Page<OrganizerApplicationResponse>> getOrganizerApplications(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String status,
+            Pageable pageable) {
+        return ResponseEntity.ok(adminService.getOrganizerApplications(pageable, status));
+    }
+
+    @PutMapping("/organizer-applications/{applicationId}/status")
+    public ResponseEntity<OrganizerApplicationResponse> updateOrganizerApplicationStatus(
+            @PathVariable Long applicationId,
+            @Valid @RequestBody OrganizerApplicationStatusRequest request) {
+        return ResponseEntity.ok(adminService.updateOrganizerApplicationStatus(applicationId, request));
     }
 }
 

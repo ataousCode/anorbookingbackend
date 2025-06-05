@@ -14,7 +14,14 @@ public interface OrganizerApplicationRepository extends JpaRepository<OrganizerA
 
     Optional<OrganizerApplication> findByUser(User user);
 
-    Page<OrganizerApplication> findByStatus(OrganizerApplication.ApplicationStatus status, Pageable pageable);
+//    Page<OrganizerApplication> findByStatus(OrganizerApplication.ApplicationStatus status, Pageable pageable);
+//
+//    boolean existsByUserAndStatus(User user, OrganizerApplication.ApplicationStatus status);
+    Optional<OrganizerApplication> findByUserAndStatus(User user, OrganizerApplication.ApplicationStatus status);
 
+
+    // NEW
     boolean existsByUserAndStatus(User user, OrganizerApplication.ApplicationStatus status);
+    Page<OrganizerApplication> findByStatus(OrganizerApplication.ApplicationStatus status, Pageable pageable);
+    long countByStatus(OrganizerApplication.ApplicationStatus status);
 }

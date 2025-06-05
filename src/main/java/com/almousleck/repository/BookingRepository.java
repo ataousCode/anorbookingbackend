@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -40,5 +41,25 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findBookingsForEventsInTimeRange(LocalDateTime startTime, LocalDateTime endTime);
 
     List<Booking> findByEventAndStatus(Event event, Booking.BookingStatus status);
+
+    @Query("SELECT b FROM Booking b WHERE b.event.organizer.id = :organizerId")
+    List<Booking> findByEventOrganizerId(Long organizerId);
+
+    @Query("SELECT b FROM Booking b WHERE b.event.organizer.id = :organizerId")
+    Page<Booking> findByEventOrganizerId(Long organizerId, Pageable pageable);
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.event.organizer.id = :organizerId AND b.status = :status")
+    Long countByEventOrganizerIdAndStatus(Long organizerId, Booking.BookingStatus status);
+
+    @Query("SELECT SUM(b.totalAmount) FROM Booking b WHERE b.event.organizer.id = :organizerId AND b.status = 'CONFIRMED'")
+    BigDecimal sumTotalAmountByEventOrganizerId(Long organizerId);
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.event.organizer.id = :organizerId")
+    Long countByEventOrganizerId(Long organizerId);
+
+    @Query("SELECT b FROM Booking b WHERE b.event.organizer.id = :organizerId AND b.status = :status")
+    List<Booking> findByEventOrganizerIdAndStatus(Long organizerId, Booking.BookingStatus status);
+
+    Page<Booking> findByEvent(Event event, Pageable pageable);
 }
 

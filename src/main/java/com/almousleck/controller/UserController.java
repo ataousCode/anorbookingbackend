@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
+    //$2a$10$fu0NfBbBoi5ApVqbxqC2senFmhosadiUcTTnR9LIGLnpf0utewRSe
+
+    // 12345678
 
     private final UserService userService;
 

@@ -20,4 +20,5 @@ public class EventSummaryResponse {
     private String categoryName;
     private Long organizerId;
     private String organizerName;
+    private String status;
 }

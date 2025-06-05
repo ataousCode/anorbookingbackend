@@ -6,6 +6,7 @@ import com.almousleck.exception.BadRequestException;
 import com.almousleck.exception.ResourceNotFoundException;
 import com.almousleck.model.EventCategory;
 import com.almousleck.repository.EventCategoryRepository;
+import com.almousleck.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final EventCategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     public List<CategoryResponse> getAllCategories() {
         List<EventCategory> categories = categoryRepository.findAll();
@@ -84,7 +86,14 @@ public class CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("EventCategory", "id", categoryId));
 
         // Check if there are any events in this category
-        // This would require an EventRepository and additional logic
+        long eventCount = eventRepository.countByCategoryAndPublishedTrue(category);
+        if (eventCount > 0) {
+            throw new BadRequestException(
+                    String.format("Cannot delete category '%s' as it has %d associated events",
+                            category.getName(), eventCount)
+            );
+        }
+
 
         categoryRepository.delete(category);
     }

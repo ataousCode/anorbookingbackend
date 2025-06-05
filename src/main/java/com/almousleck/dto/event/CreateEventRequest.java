@@ -36,7 +36,7 @@ public class CreateEventRequest {
 
     private String imageUrl;
 
-    private boolean published;
+    private boolean published = true;
 
     @NotNull(message = "Category ID cannot be null")
     private Long categoryId;

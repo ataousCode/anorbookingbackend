@@ -67,7 +67,6 @@ public class AuthService {
             throw new BadRequestException("Email is already in use");
         }
 
-        // Create user account but set enabled to false until OTP verification
         User user = User.builder()
                 .name(signupRequest.getName())
                 .username(signupRequest.getUsername())
@@ -206,7 +205,6 @@ public class AuthService {
     private void saveOtp(String email, String otp, OtpVerification.OtpType type) {
         LocalDateTime expiryDate = LocalDateTime.now()
                 .plusSeconds(appProperties.getOtp().getExpiration());
-
         OtpVerification otpVerification = OtpVerification.builder()
                 .email(email)
                 .otp(otp)
@@ -214,7 +212,6 @@ public class AuthService {
                 .expiryDate(expiryDate)
                 .used(false)
                 .build();
-
         otpVerificationRepository.save(otpVerification);
     }
 }

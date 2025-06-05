@@ -13,12 +13,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+//    public UserProfileResponse getUserProfile(UserPrincipal currentUser) {
+//        User user = userRepository.findById(currentUser.getId())
+//                .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+//
+//        return UserProfileResponse.builder()
+//                .id(user.getId())
+//                .name(user.getName())
+//                .username(user.getUsername())
+//                .email(user.getEmail())
+//                .phoneNumber(user.getPhoneNumber())
+//                .build();
+//    }
 
     public UserProfileResponse getUserProfile(UserPrincipal currentUser) {
         User user = userRepository.findById(currentUser.getId())
@@ -30,8 +45,38 @@ public class UserService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
+                .enabled(user.isEnabled())
+                .roles(user.getRoles().stream()
+                        .map(role -> role.getName().name().replace("ROLE_", ""))
+                        .collect(Collectors.toList()))
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
+
+//    @Transactional
+//    public UserProfileResponse updateProfile(UserPrincipal currentUser, UpdateProfileRequest updateRequest) {
+//        User user = userRepository.findById(currentUser.getId())
+//                .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+//
+//        if (updateRequest.getName() != null) {
+//            user.setName(updateRequest.getName());
+//        }
+//
+//        if (updateRequest.getPhoneNumber() != null) {
+//            user.setPhoneNumber(updateRequest.getPhoneNumber());
+//        }
+//
+//        User updatedUser = userRepository.save(user);
+//
+//        return UserProfileResponse.builder()
+//                .id(updatedUser.getId())
+//                .name(updatedUser.getName())
+//                .username(updatedUser.getUsername())
+//                .email(updatedUser.getEmail())
+//                .phoneNumber(updatedUser.getPhoneNumber())
+//                .build();
+//    }
 
     @Transactional
     public UserProfileResponse updateProfile(UserPrincipal currentUser, UpdateProfileRequest updateRequest) {
@@ -54,9 +99,28 @@ public class UserService {
                 .username(updatedUser.getUsername())
                 .email(updatedUser.getEmail())
                 .phoneNumber(updatedUser.getPhoneNumber())
+                .enabled(updatedUser.isEnabled())
+                .roles(updatedUser.getRoles().stream()
+                        .map(role -> role.getName().name().replace("ROLE_", ""))
+                        .collect(Collectors.toList()))
+                .createdAt(updatedUser.getCreatedAt())
+                .updatedAt(updatedUser.getUpdatedAt())
                 .build();
     }
 
+
+//    @Transactional
+//    public void changePassword(UserPrincipal currentUser, ChangePasswordRequest changePasswordRequest) {
+//        User user = userRepository.findById(currentUser.getId())
+//                .orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+//
+//        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
+//            throw new BadRequestException("Current password is incorrect");
+//        }
+//
+//        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+//        userRepository.save(user);
+//    }
     @Transactional
     public void changePassword(UserPrincipal currentUser, ChangePasswordRequest changePasswordRequest) {
         User user = userRepository.findById(currentUser.getId())
