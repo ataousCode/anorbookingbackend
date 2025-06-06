@@ -1,25 +1,43 @@
 spring:
   datasource:
     url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
     username: sa
     password:
-    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-  flyway:
-    enabled: false
+        format_sql: true
+    show-sql: false
+  h2:
+    console:
+      enabled: true
   mail:
     host: localhost
-    port: 3025
+    port: 1025
     username:
     password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+app:
+  jwt:
+    secret: testSecretKeyForJwtTokenGenerationInAnorBookingAppTesting
+    expiration: 86400000
+    refresh-expiration: 604800000
+  otp:
+    expiration: 900
+  file:
+    upload-dir: ./test-uploads
 
 logging:
   level:
-    com.anor.booking: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate: INFO
+    com.almousleck: DEBUG
+    org.springframework.security: DEBUG

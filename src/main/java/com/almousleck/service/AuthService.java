@@ -54,7 +54,8 @@ public class AuthService {
         String accessToken = tokenProvider.generateToken(authentication);
         String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
-        return new JwtAuthResponse(accessToken, refreshToken, "Bearer");
+        return new JwtAuthResponse(accessToken, refreshToken, "Bearer",
+                appProperties.getJwt().getExpiration());
     }
 
     @Transactional
@@ -194,7 +195,8 @@ public class AuthService {
 
         String accessToken = tokenProvider.generateToken(authentication);
 
-        return new JwtAuthResponse(accessToken, refreshTokenRequest.getRefreshToken(), "Bearer");
+        return new JwtAuthResponse(accessToken, refreshTokenRequest.getRefreshToken(), "Bearer",
+                appProperties.getJwt().getExpiration());
     }
 
     private String generateOtp() {

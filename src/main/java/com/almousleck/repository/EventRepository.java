@@ -63,16 +63,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e FROM Event e WHERE e.organizer.id = :organizerId AND e.published = :published")
     List<Event> findByOrganizerIdAndPublished(Long organizerId, boolean published);
 
-    //NEW
-//    @Query("SELECT COUNT(e) FROM Event e WHERE e.category = :category AND e.published = true")
-//    Long countByCategoryAndPublishedTrue(EventCategory category);
-
     // Add this new method
     @Query("SELECT COUNT(e) FROM Event e WHERE e.category = :category")
     Long countByCategory(EventCategory category);
-
-//    @Query("SELECT e FROM Event e WHERE e.organizer.id = :organizerId AND e.published = true")
-//    List<Event> findPublishedEventsByOrganizerId(Long organizerId);
-
-
 }
